@@ -6,7 +6,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-@Configuration//ioc 등록 request 요청이 오면 Filter 실행. securityconfig에 filter 등록 시 security filter가 우선.
+@Configuration//ioc 등록 config 파일임을 명시. request 요청이 오면 Filter 실행. SecurityConfig에 filter 등록 시 security Filter 가 우선.
 public class FilterConfig {
 
     @Bean
