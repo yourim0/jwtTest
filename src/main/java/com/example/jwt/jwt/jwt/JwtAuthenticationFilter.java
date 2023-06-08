@@ -1,5 +1,7 @@
 package com.example.jwt.jwt.jwt;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.example.jwt.jwt.config.auth.PrincipalDetails;
 import com.example.jwt.jwt.model.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.Date;
 
 
 //스프링시큐리티에 UsernamePasswordAuthenticationFilter 가 있음. 로그인하는 역할.
@@ -78,10 +81,26 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     //attemptAuthentication 실행 종료 후 인증이 정상적으로 되었으면 successfulAuthentication 함수 실행.
     //jwt 토큰을 만들어서 request한 사용자에게 jwt토큰을 response해주면 된다.
+
+    //기존 : username, pw 로그인이 정상이면 서버쪽 세션ID를 생성, 클라이언트 쿠키 세션ID를 응답
+    //요청할때마다 쿠키값 세션ID를 항상 들고 서버쪽으로 요청하기 때문에 서버는 세션ID가 유효한지 판단(서버에서 session.getAttribute("세션값확인")만하면된다)해서 유효하면 인증이 필요한 페이지로 접근하게 하면 된다.
+    //토큰 : username, pw 로그인이 정상이면 JWT토큰을 생성, 클라이언트쪽으로 JWT토큰을 응답.
+    //요청할때마다 JWT토큰을 가지고 요청, 서버는 JWT 토큰이 유효한지를 판단(필터를 만들어야 한다. )
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         System.out.println("successfulAuthentication 실행됨:인증이 완료되었다는 뜻");
-        super.successfulAuthentication(request, response, chain, authResult);
+        PrincipalDetails principalDetails = (PrincipalDetails)authResult.getPrincipal(); //이정보로 토큰 생성
+
+        //RSA방식이 아닌 Hash 암호방식. HMAC512 특징은 시크릿값을 가지고 있어야 한다.
+        String jwtToken = JWT.create()
+                //.withSubject(principalDetails.getUsername()) //토큰이름
+                .withSubject("cos토큰")
+                .withExpiresAt(new Date(System.currentTimeMillis()+(60000)*10)) //만료시간(현재시간+1000이 1초.10분)
+                        .withClaim("id",principalDetails.getUser().getId())
+                                .withClaim("username",principalDetails.getUser().getUsername())
+                                        .sign(Algorithm.HMAC512("cos")); //sign
+        response.addHeader("Authorization","Bearer "+jwtToken);
+
     }
 }
 
