@@ -22,7 +22,7 @@ public class PrincipalDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Collection<GrantedAuthority> authorities = new ArrayList<>();
+        Collection<GrantedAuthority> authorities = new ArrayList<>(); //권한을 list로 return 받는이유
         user.getRoleList().forEach(r-> {
             authorities.add(()-> r);
         });
