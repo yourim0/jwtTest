@@ -33,7 +33,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilter(corsFilter) //모든 요청은 이 필터를 탐. @CrossOrigin(인증 없을 때), 시큐리티 필터에 등록 해주어야 함(인증이 있을 때)
                 .formLogin().disable() //form 태그를 이용한 login 안씀
                 .addFilter(new JwtAuthenticationFilter(authenticationManager()))//UsernamePasswordAuthenticationFilter 사용하기 위함. AuthenticationManager 파라미터가 필요하다.
-                .addFilter(new JwtAuthorizationFilter(authenticationManager(),userRepository))
+                .addFilter(new JwtAuthorizationFilter(authenticationManager(),userRepository)) ///login실행
                 .httpBasic().disable() //기본적 http 방식을 안씀
                 .authorizeRequests()
                 .antMatchers("/api/v1/user/**") //이 주소로 들어오면

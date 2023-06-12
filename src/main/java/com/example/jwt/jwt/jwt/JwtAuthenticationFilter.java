@@ -23,7 +23,7 @@ import java.util.Date;
 
 
 //스프링시큐리티에 UsernamePasswordAuthenticationFilter 가 있음. 로그인하는 역할.
-// /login 요청해서 Username, password를 post로 전송하면 위 필터가 낚아채서 동작한다.
+// /login 요청해서 Username, password를 post로 전송하면 UsernamePasswordAuthenticationFilter 필터가 낚아채서 동작한다.
 //AuthenticationManager
 
 @RequiredArgsConstructor
@@ -36,19 +36,19 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
 // /login 요청 시 로그인 시도를 위해서 실행되는 함수
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        System.out.println("JwtAuthenticationFilter : 로그인 시도중");
+            public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+                System.out.println("JwtAuthenticationFilter : 로그인 시도중");
 
-        //1.username, password 받아서; //request.getInputStream() 안에 username, password가 들어있다.
-        //확인 방법
-        try {
+                //1.username, password 받아서; //request.getInputStream() 안에 username, password가 들어있다.
+                //확인 방법
+                try {
 //            BufferedReader br = request.getReader();
 //            String input = null;
 //            while((input = br.readLine()) != null){
 //            System.out.println(input);
 //        }
-            ObjectMapper om = new ObjectMapper(); //json 데이터를 파싱해주는 class
-            User user = om.readValue(request.getInputStream(), User.class); //User object에 담아준다.
+                    ObjectMapper om = new ObjectMapper(); //json 데이터를 파싱해주는 class
+                    User user = om.readValue(request.getInputStream(), User.class); //User object에 담아준다.
             System.out.println(user);
 
             //토큰 생성
@@ -68,8 +68,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             //리턴될때 authentication 객체가 Session에 저장된다.
             //권한 관리를 security가 대신 해주기 때문에 편리하게 사용하기 위해 리턴해준다. jwt토큰 사용시 세션을 굳이 사용하지 않아도 되지만 단지 권한 처리 때문에 넣는 것.
 
-
-
             return authentication;
         } catch (IOException e) {
             e.printStackTrace();
@@ -85,7 +83,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     //기존 : username, pw 로그인이 정상이면 서버쪽 세션ID를 생성, 클라이언트 쿠키 세션ID를 응답
     //요청할때마다 쿠키값 세션ID를 항상 들고 서버쪽으로 요청하기 때문에 서버는 세션ID가 유효한지 판단(서버에서 session.getAttribute("세션값확인")만하면된다)해서 유효하면 인증이 필요한 페이지로 접근하게 하면 된다.
     //토큰 : username, pw 로그인이 정상이면 JWT토큰을 생성, 클라이언트쪽으로 JWT토큰을 응답.
-    //요청할때마다 JWT토큰을 가지고 요청, 서버는 JWT 토큰이 유효한지를 판단(필터를 만들어야 한다. )
+    //요청할때마다 JWT토큰을 가지고 요청, 서버는 JWT 토큰이 유효한지를 판단(필터를 만들어야 한다.)
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         System.out.println("successfulAuthentication 실행됨:인증이 완료되었다는 뜻");
@@ -98,7 +96,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .withExpiresAt(new Date(System.currentTimeMillis()+(60000)*10)) //만료시간(현재시간+1000이 1초.10분)
                         .withClaim("id",principalDetails.getUser().getId())
                                 .withClaim("username",principalDetails.getUser().getUsername())
-                                        .sign(Algorithm.HMAC512("cos")); //sign
+                                        .sign(Algorithm.HMAC512("cos")); //cos-> secretkey???
         response.addHeader("Authorization","Bearer "+jwtToken);
 
     }

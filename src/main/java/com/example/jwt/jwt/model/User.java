@@ -18,7 +18,7 @@ public class User { //USER object 생성
     private long id;
     private String username;
     private String password;
-    private String roles; //USER,ADMIN
+    private String roles; //USER,ADMIN,MANAGER
 
     public List<String> getRoleList() { //role이 두개 이상일 경우 사용
         if (this.roles.length() > 0) {

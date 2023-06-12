@@ -4,18 +4,17 @@ import com.example.jwt.jwt.config.repository.UserRepository;
 import com.example.jwt.jwt.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController //필터3을 통과하지 못하면 controller 진입 자체가 안된다.
+@RequestMapping("auth")
 public class RestApiController {
     private User user;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final UserRepository userRepository;
 
+    ///login은 spring security 기본 루트
 
     @GetMapping("/home")
     public String home() {
@@ -35,7 +34,8 @@ public class RestApiController {
         System.out.println(user);
         System.out.println(user.getPassword());
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        user.setRoles("ROLE_USER");
+        user.setRoles(user.getRoles());
+        //user.setRoles("ROLE_USER");
         userRepository.save(user);
         return "회원가입완료";
     }
