@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController //필터3을 통과하지 못하면 controller 진입 자체가 안된다.
-@RequestMapping("auth")
+@RequestMapping("/auth")
 public class RestApiController {
     private User user;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;

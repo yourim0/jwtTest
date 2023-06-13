@@ -1,7 +1,7 @@
 <template>
-    <router-link to="/user">USER  </router-link>
-    <router-link to="/admin">ADMIN  </router-link>
     <router-link to="/login">LOGIN  </router-link>
+    <router-link to="/join">JOIN  </router-link>
+    <router-link to="/">HOME  </router-link>
 </template>
 
 <script>

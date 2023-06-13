@@ -36,11 +36,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilter(new JwtAuthorizationFilter(authenticationManager(),userRepository)) ///login실행
                 .httpBasic().disable() //기본적 http 방식을 안씀
                 .authorizeRequests()
-                .antMatchers("/api/v1/user/**") //이 주소로 들어오면
+                .antMatchers("/auth/api/v1/user/**") //이 주소로 들어오면
                 .access("hasRole('ROLE_USER') or hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')") //user, manage, admin 접속이 가능하다.
-                .antMatchers("/api/v1/manager/**")
+                .antMatchers("/auth/api/v1/manager/**")
                 .access("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
-                .antMatchers("/api/v1/admin/**")
+                .antMatchers("/auth/api/v1/admin/**")
                 .access("hasRole('ROLE_ADMIN')")
                 .anyRequest().permitAll();//외 모든 주소는 권한없이 접속가능하다
     }

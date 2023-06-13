@@ -3,17 +3,17 @@
     <main class="form-signin">
       <form>
         <img class="mb-4" src="../assets/smiling.png" alt="" width="72" height="72">
-        <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
+        <h1 class="h3 mb-3 fw-normal">로그인</h1>
 
         <div class="form-floating">
           <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com"
             v-model="state.form.username">
-          <label for="floatingInput">Email address</label>
+          <label for="floatingInput">닉네임</label>
         </div>
         <div class="form-floating">
           <input type="password" class="form-control" id="floatingPassword" placeholder="Password"
             v-model="state.form.password">
-          <label for="floatingPassword">Password</label>
+          <label for="floatingPassword">패스워드</label>
         </div>
 
         <div class="checkbox mb-3">
@@ -21,8 +21,8 @@
             <input type="checkbox" value="remember-me"> Remember me
           </label>
         </div>
-        <button class="w-100 btn btn-lg btn-primary" @click.self.prevent="submit()">Sign in</button>
-
+        <button class="btn btn-sm btn-primary" @click.self.prevent="submit()">회원가입</button>&nbsp;
+        <button class="btn btn-sm btn-primary" @click.self.prevent="submit()">로그인</button>
       </form>
     </main>
   </body>
@@ -31,10 +31,10 @@
 <script>
 import { reactive } from 'vue';
 import axios from 'axios';
-
+import router from '@/router';
 
 export default {
-  name: 'HelloWorld',
+  name: 'LoginPage',
   props: {
     msg: String
   },
@@ -47,8 +47,14 @@ export default {
     })
 
     const submit = () => {
-      axios.post("/login", state.form , { headers: { 'Authorization': 'cos' } }).then((res) => {
+      axios.post("/login", state.form , { headers: { 'Authorization': 'cos' } }).then((res) => { //header에 cos가 없으면 로그인다시하세요. 있으면 
         console.log(res);
+        var jwtToken = res.headers.get("Authorization");
+        console.log(jwtToken);
+        localStorage.setItem("Authorization",jwtToken);
+        window.alert("로그인 되었습니다.");
+        router.push('/');
+        
       }).catch(() => {
         window.alert("로그인 정보가 존재하지 않습니다.");
       });
