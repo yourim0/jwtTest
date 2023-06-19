@@ -26,7 +26,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception{
         //http.addFilterBefore(new MyFilter3(), BasicAuthenticationFilter.class);//security filter chain이 무조건 우선이다. 내가 만든 filter가 무조건 먼저 실행하게 하려면 securityfilterchain의 첫번째 filter보다 before로 설정해준다.
-        http.addFilterBefore(new MyFilter3(), SecurityContextPersistenceFilter.class);
+        //http.addFilterBefore(new MyFilter3(), SecurityContextPersistenceFilter.class);
+
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)//세션을 사용하지 않는다.
                 .and()

@@ -25,6 +25,8 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
     private UserRepository userRepository;
 
+    JwtProperties jwtProperties;
+
     public JwtAuthorizationFilter(AuthenticationManager authenticationManager, UserRepository userRepository) {
         super(authenticationManager);
         this.userRepository = userRepository;
@@ -46,8 +48,9 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             return;
         }
         //JWT 토큰을 검증해서 정상적인 사용자인지 확인
+        //String secret = jwtProperties.secret;
         String jwtToken = request.getHeader("Authorization").replace("Bearer ","");
-        String username = JWT.require(Algorithm.HMAC512("cos")).build().verify(jwtToken).getClaim("username").asString();
+        String username = JWT.require(Algorithm.HMAC512(JwtProperties.secret)).build().verify(jwtToken).getClaim("username").asString();
 
         //서명이 정상적으로 되었다
         if(username != null){

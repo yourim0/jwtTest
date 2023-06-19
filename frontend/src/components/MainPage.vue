@@ -7,20 +7,23 @@
 import axios from 'axios'
 
 export default {
-    
+   
     setup(){
     const user = () =>{
-        var jwtToken = localStorage.getItem("Authorization");
+        const jwtToken = localStorage.getItem("Authorization");
         axios.get('/auth/api/v1/user', { headers: { 'Authorization': jwtToken } }).then((res) => {
             console.log(res);
+            window.alert('user 접근가능');
         }).catch(() => {
             window.alert('user token error');
         })
     }
 
     const admin = () => {
-        axios.get('/auth/api/v1/admin').then((res) => {
+        const jwtToken = localStorage.getItem("Authorization");
+        axios.get('/auth/api/v1/admin', { headers: { 'Authorization': jwtToken } }).then((res) => {
             console.log(res);
+            window.alert('admin 접근가능');
         }).catch(() => {
             window.alert('admin token err');
         })

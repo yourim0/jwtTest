@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RequiredArgsConstructor
 @RestController //필터3을 통과하지 못하면 controller 진입 자체가 안된다.
 @RequestMapping("/auth")
@@ -31,14 +33,34 @@ public class RestApiController {
     public String join(@RequestBody User user) {
         System.out.println("join");
 
-        System.out.println(user);
-        System.out.println(user.getPassword());
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        user.setRoles(user.getRoles());
-        //user.setRoles("ROLE_USER");
-        userRepository.save(user);
-        return "회원가입완료";
+            System.out.println(user);
+            System.out.println(user.getPassword());
+            user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+            user.setEmail(user.getEmail());
+            //user.setRoles(user.getRoles());
+            user.setRoles("ROLE_USER");
+            userRepository.save(user);
+            return "회원가입완료";
     }
+
+    //중복id체크
+    @PostMapping("/checkId")
+    public String checkId(@RequestBody Map<String, String> username) {
+        System.out.println("checkId");
+        String user = username.get("username");
+        System.out.println("username: " + username);
+        User checkUser = userRepository.findByUsername(user);
+        System.out.println(checkUser);
+
+        if (checkUser == null) {
+            return "사용가능한 닉네임입니다.";
+        } else if (checkUser != null) {
+            return "이미 가입된 회원입니다.";
+        }
+        return "조회완료";
+    }
+
+
 
     //user, manager, admin 권한 접근가능
     @GetMapping("/api/v1/user")

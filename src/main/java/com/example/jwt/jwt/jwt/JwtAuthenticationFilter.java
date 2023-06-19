@@ -14,10 +14,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.Date;
 
@@ -33,6 +31,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     //public JwtAuthenticationFilter(authenticationManager()) {
     //}
     private final AuthenticationManager authenticationManager;
+
+    JwtProperties jwtProperties;
 
 // /login 요청 시 로그인 시도를 위해서 실행되는 함수
     @Override
@@ -88,7 +88,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         System.out.println("successfulAuthentication 실행됨:인증이 완료되었다는 뜻");
         PrincipalDetails principalDetails = (PrincipalDetails)authResult.getPrincipal(); //이정보로 토큰 생성
-
+        System.out.println("principalDetails" + principalDetails);
+        //String secretKey = jwtProperties.secret;
+       // System.out.println(secretKey);
         //RSA방식이 아닌 Hash 암호방식. HMAC512 특징은 시크릿값을 가지고 있어야 한다.
         String jwtToken = JWT.create()
                 //.withSubject(principalDetails.getUsername()) //토큰이름
@@ -96,7 +98,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .withExpiresAt(new Date(System.currentTimeMillis()+(60000)*10)) //만료시간(현재시간+1000이 1초.10분)
                         .withClaim("id",principalDetails.getUser().getId())
                                 .withClaim("username",principalDetails.getUser().getUsername())
-                                        .sign(Algorithm.HMAC512("cos")); //cos-> secretkey???
+                                        .sign(Algorithm.HMAC512("limi")); //limi secretkey를 암호화해서 만든거
         response.addHeader("Authorization","Bearer "+jwtToken);
 
     }

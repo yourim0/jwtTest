@@ -1,5 +1,7 @@
 package com.example.jwt.jwt.filter;
 
+import com.auth0.jwt.JWT;
+import com.example.jwt.jwt.jwt.JwtProperties;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.*;
@@ -8,7 +10,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-public class MyFilter3 implements Filter {
+public class MyFilter3 implements Filter { //임시 토큰 test용 filter
+
+    JwtProperties jwtProperties;
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 
@@ -29,12 +33,14 @@ public class MyFilter3 implements Filter {
             System.out.println("필터3");
 
             //if(StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
-            //    chain.doFilter(req,res);
-            if(headerAuth.equals("cos")){ //임시토큰
-                chain.doFilter(req,res);//프로세스가 끝나지 않도록 계속 chain에 넘겨준다.
+                //    chain.doFilter(req,res);
+            String token = jwtProperties.secret;
+
+            if(headerAuth != null && headerAuth.equals("limi")){ //임시토큰if(headerAuth.equals("limi")){ //임시토큰
+                    chain.doFilter(req,res);//프로세스가 끝나지 않도록 계속 chain에 넘겨준다.
             }else{
                 PrintWriter out = res.getWriter();
-                out.println("인증안됨");
+                out.println("인증안됨, 로그인하세요");
             }
         }
 

@@ -11,35 +11,29 @@
                 <div class="col-12">
                     <label for="username" class="form-label">닉네임</label>
                     <div class="input-group has-validation">
-                    <input type="text" class="form-control" id="username" placeholder="Username" required>
-                    <button class="btn btn-sm btn-primary">중복확인</button>
-                    <div class="invalid-feedback">
-                        Your username is required.
-                    </div>
+                    <input type="text" class="form-control" id="username" placeholder="닉네임" v-model="state.form.username" required>
+                    <button class="btn btn-sm btn-primary" @click.prevent="checkId()">중복확인</button>
                     </div>
                 </div>
 
                 <div class="col-12">
                      <label for="password" class="form-label">패스워드</label>
                       <div class="input-group has-validation">
-                        <input type="password" class="form-control" id="password" placeholder="password" required> &nbsp;
-                        <input type="password" class="form-control" id="password" placeholder="password check" required>
-                      <div class="invalid-feedback">
-                          Password is required.
-                        </div>
+                        <input type="password" class="form-control" id="password" placeholder="패스워드" v-model="state.form.password" required> &nbsp;
+                        <input type="password" class="form-control" id="passwordcheck" placeholder="패스워드" v-model="state.passwordcheck" required>
+                        <div class="passwordchk" v-if="state.passwordValidFlag">
+                          패스워드가 일치하지 않습니다.
+                      </div>
                       </div>
                 </div>
 
                 <div class="col-12">
                   <label for="email" class="form-label">이메일 <span class="text-body-secondary"></span></label>
-                  <input type="email" class="form-control" id="email" placeholder="you@example.com">
-                  <div class="invalid-feedback">
-                    Please enter a valid email address for shipping updates.
-                  </div>
+                  <input type="email" class="form-control" id="email" placeholder="you@example.com" v-model="state.form.email">
                 </div>
 
               </div> <br/> 
-              <button class="w-100 btn btn-primary btn-lg" type="submit">회원가입</button>
+              <button class="btn btn-primary btn-sm" @click.prevent="submit()">회원가입</button>
             </form>
       </main>
 
@@ -52,7 +46,64 @@
 </template>
 
 <script>
+import { reactive, watch } from 'vue'; //반응형 ref
+import axios from 'axios';
+ 
 export default {
+
+  setup(){
+    const state = reactive({
+      form:{
+        username:"",
+        password:"",  
+        email:""
+      },
+      passwordcheck: "",
+      passwordValidFlag : false,
+    })
+
+    watch(
+      () => state.passwordcheck,() => {
+        if(state.form.password !== state.passwordcheck){
+          state.passwordValidFlag = true;
+          console.log(state.passwordValidFlag)
+        }else{
+          state.passwordValidFlag = false;
+          console.log(state.passwordValidFlag)
+        }
+
+    })
+
+    const submit = () =>{
+      if (!state.form.username) {
+        window.alert("닉네임을 입력하세요");
+        return false;
+      } else if (!state.form.password) {
+        window.alert("패스워드를 입력하세요");
+        return false;
+      } else if (!state.form.email) {
+        window.alert("이메일을 입력하세요");
+        return false;
+      }
+
+      axios.post('/auth/join', state.form, { headers: { 'Authorization': 'cos' } }).then((res) => {
+         window.alert(res);
+      }).catch(()=>{
+         window.alert("이미 가입된 회원입니다.");
+      })
+    }
+
+    const checkId = () =>{ //아이디 중복확인 //로그인이 안됐을텐데 header 가 필요한가
+      console.log(state.form.username);
+      axios.post('/auth/checkId', {username : state.form.username}, { headers: { 'Authorization': 'cos' } }).then((res) => {
+               window.alert(res.data);
+      }).catch(() => {
+        window.alert("이미 가입된 회원입니다.");
+      })
+    }
+
+    return { state, submit, checkId }
+  }
 
 }
 </script>
@@ -69,6 +120,10 @@ body {
   padding-top: 40px;
   padding-bottom: 40px;
   background-color: #f5f5f5;
+}
+
+.passwordchk{
+  color : red;
 }
 
 </style>

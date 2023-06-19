@@ -21,8 +21,9 @@
             <input type="checkbox" value="remember-me"> Remember me
           </label>
         </div>
-        <button class="btn btn-sm btn-primary" @click.self.prevent="submit()">회원가입</button>&nbsp;
+        <button class="btn btn-sm btn-primary" @click="join()">회원가입</button>&nbsp;
         <button class="btn btn-sm btn-primary" @click.self.prevent="submit()">로그인</button>
+
       </form>
     </main>
   </body>
@@ -32,6 +33,7 @@
 import { reactive } from 'vue';
 import axios from 'axios';
 import router from '@/router';
+import store from '@/scripts/store';
 
 export default {
   name: 'LoginPage',
@@ -47,11 +49,23 @@ export default {
     })
 
     const submit = () => {
-      axios.post("/login", state.form , { headers: { 'Authorization': 'cos' } }).then((res) => { //header에 cos가 없으면 로그인다시하세요. 있으면 
+      if(!state.form.username){
+        window.alert("닉네임을 입력하세요");
+        return false;
+      }else if(!state.form.password){
+        window.alert("패스워드를 입력하세요");
+        return false;
+      }
+      
+      
+      
+
+      axios.post("/login", state.form , { headers: { 'Authorization': 'limi'} }).then((res) => { //header에 cos가 없으면 로그인다시하세요. 있으면 계속저장
         console.log(res);
         var jwtToken = res.headers.get("Authorization");
         console.log(jwtToken);
         localStorage.setItem("Authorization",jwtToken);
+        store.commit('setToken',jwtToken);
         window.alert("로그인 되었습니다.");
         router.push('/');
         
@@ -59,7 +73,12 @@ export default {
         window.alert("로그인 정보가 존재하지 않습니다.");
       });
     }
-    return { state, submit }
+
+    const join= () => {
+      router.push('/join')
+    }
+
+    return { state, submit, join }
   }
 }
 
