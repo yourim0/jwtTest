@@ -32,7 +32,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     //}
     private final AuthenticationManager authenticationManager;
 
-    JwtProperties jwtProperties;
 
 // /login 요청 시 로그인 시도를 위해서 실행되는 함수
     @Override
@@ -98,8 +97,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .withExpiresAt(new Date(System.currentTimeMillis()+(60000)*10)) //만료시간(현재시간+1000이 1초.10분)
                         .withClaim("id",principalDetails.getUser().getId())
                                 .withClaim("username",principalDetails.getUser().getUsername())
-                                        .sign(Algorithm.HMAC512("limi")); //limi secretkey를 암호화해서 만든거
-        response.addHeader("Authorization","Bearer "+jwtToken);
+                                        .sign(Algorithm.HMAC512(JwtProperties.secret)); //limi secretkey를 암호화해서 만든거
+        response.addHeader(JwtProperties.HEADER_STRING,JwtProperties.TOKEN_PREFIX+jwtToken);
 
     }
 }
