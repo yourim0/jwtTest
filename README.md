@@ -1,1 +1,1 @@
-### SpringSecurity + JWT
+### SpringSecurity
